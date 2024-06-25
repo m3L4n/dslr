@@ -1,7 +1,10 @@
+"""descripe.py."""
 
 
 def main():
-  print("helddddddd d dd d d . d d d d d . d d d d d d d d . d d d d d . d d d d d d d d d d . d d d d d d . d dlo")
+    """Main function."""
+    pass
+
 
 if __name__ == "__main__":
-  main()
+    main()
