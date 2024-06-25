@@ -1,4 +1,8 @@
+"""main module."""
+
+
 def main():
+    """Main function."""
     print("hello")
 
 

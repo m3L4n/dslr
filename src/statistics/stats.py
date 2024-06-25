@@ -1,13 +1,20 @@
+"""Stats lib implemented for dslr."""
+
 from typing import Any
 
 
 def remove_null(data: list[Any]) -> list[Any]:
+    """Remove all None entries in a list.
+
+    remove_null(data: list[Any]) -> list[Any]
+    """
     return [x for x in data if x]
 
 
 def mean(data: list[float]) -> float:
-    """mean(data: list[float]) -> float
-    return the mean of data
+    """Return the mean of data.
+
+    mean(data: list[float]) -> float
     """
     data = remove_null(data)
     if len(data) == 0:
@@ -16,8 +23,9 @@ def mean(data: list[float]) -> float:
 
 
 def median(data: list[float]) -> float | int:
-    """median(data: list[float]) -> float
-    return the median of data
+    """Return the median of data.
+
+    median(data: list[float]) -> float
     """
     if len(data) == 0:
         raise ValueError("List empty")
@@ -32,17 +40,18 @@ def median(data: list[float]) -> float | int:
 
 
 def count(data: list[float]) -> float:
-    """count(data: list[float]) -> int
-    return the number of non null element in
-    list
+    """Return the number of non null element in list.
+
+    count(data: list[float]) -> int
     """
     data = remove_null(data)
     return len(data)
 
 
 def max(data: list[Any]) -> Any:
-    """max(data: list[Any]) -> Any
-    return the bigger value in the list
+    """Return the bigger value in the list.
+
+    max(data: list[Any]) -> Any
     """
     data = remove_null(data)
     if len(data) == 0:
@@ -55,8 +64,9 @@ def max(data: list[Any]) -> Any:
 
 
 def min(data: list[Any]) -> Any:
-    """min(data: list[Any]) -> Any
-    return the bigger value in the list
+    """Return the bigger value in the list.
+
+    min(data: list[Any]) -> Any
     """
     data = remove_null(data)
     if len(data) == 0:
@@ -69,8 +79,9 @@ def min(data: list[Any]) -> Any:
 
 
 def std(data: list[float]) -> float:
-    """std(data: list[float]) -> float
-    return the standard deviation of data
+    """Return the standard deviation of data.
+
+    std(data: list[float]) -> float
     """
     data = remove_null(data)
     if len(data) == 0:
@@ -82,8 +93,9 @@ def std(data: list[float]) -> float:
 
 
 def lower_quartile(data: list[float]) -> float:
-    """lower_quartile(data: list[float]) -> float
-    return the Q1 of data
+    """Return the Q1 of data.
+
+    lower_quartile(data: list[float]) -> float
     """
     data = sorted(remove_null(data))
     if len(data) == 0:
@@ -98,8 +110,9 @@ def lower_quartile(data: list[float]) -> float:
 
 
 def median_quartile(data: list[float]) -> float:
-    """median_quartile(data: list[float]) -> float
-    return the Q2 of data
+    """Return the Q2 of data.
+
+    median_quartile(data: list[float]) -> float
     """
     data = sorted(remove_null(data))
     if len(data) == 0:
@@ -113,8 +126,9 @@ def median_quartile(data: list[float]) -> float:
 
 
 def upper_quartile(data: list[float]) -> float:
-    """upper_quartile(data: list[float]) -> float
-    return the Q3 of data
+    """Return the Q3 of data.
+
+    upper_quartile(data: list[float]) -> float
     """
     data = sorted(remove_null(data))
     if len(data) == 0:
