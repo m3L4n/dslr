@@ -1,27 +1,33 @@
 """Stats lib implemented for dslr."""
 
-from typing import Any
+from typing import Any, Callable, List
 
 
-def remove_null(data: list[Any]) -> list[Any]:
-    """Remove all None entries in a list.
+def remove_null(func: Callable[[List[float]], float]) -> Callable[[List[float]], float]:
+    """Decorator who remove the None from the data list argument.
 
-    remove_null(data: list[Any]) -> list[Any]
+    remove_null_decorator(func: Callable[[List[float]], float]) -> Callable[[List[float]], float]
     """
-    return [x for x in data if x]
+
+    def wrapper(data: List[float]) -> float:
+        data = [x for x in data if x is not None]
+        return func(data)
+
+    return wrapper
 
 
-def mean(data: list[float]) -> float:
+@remove_null
+def mean(data: List[float]) -> float:
     """Return the mean of data.
 
     mean(data: list[float]) -> float
     """
-    data = remove_null(data)
     if len(data) == 0:
         raise ValueError("List empty")
     return sum(data) / len(data)
 
 
+@remove_null
 def median(data: list[float]) -> float | int:
     """Return the median of data.
 
@@ -29,7 +35,7 @@ def median(data: list[float]) -> float | int:
     """
     if len(data) == 0:
         raise ValueError("List empty")
-    data = sorted(remove_null(data))
+    data = sorted(data)
     data_len = len(data)
     data = sorted(data)
     if data_len % 2 != 0:
@@ -39,21 +45,21 @@ def median(data: list[float]) -> float | int:
     return (med1 + med2) / 2
 
 
+@remove_null
 def count(data: list[float]) -> float:
     """Return the number of non null element in list.
 
     count(data: list[float]) -> int
     """
-    data = remove_null(data)
     return len(data)
 
 
+@remove_null
 def max(data: list[Any]) -> Any:
     """Return the bigger value in the list.
 
     max(data: list[Any]) -> Any
     """
-    data = remove_null(data)
     if len(data) == 0:
         raise ValueError("List empty")
     max = float("-inf")
@@ -63,12 +69,12 @@ def max(data: list[Any]) -> Any:
     return max
 
 
+@remove_null
 def min(data: list[Any]) -> Any:
     """Return the bigger value in the list.
 
     min(data: list[Any]) -> Any
     """
-    data = remove_null(data)
     if len(data) == 0:
         raise ValueError("List empty")
     max = float("inf")
@@ -78,12 +84,12 @@ def min(data: list[Any]) -> Any:
     return max
 
 
+@remove_null
 def std(data: list[float]) -> float:
     """Return the standard deviation of data.
 
     std(data: list[float]) -> float
     """
-    data = remove_null(data)
     if len(data) == 0:
         raise ValueError("List empty")
     sample_mean = mean(data)
@@ -92,12 +98,13 @@ def std(data: list[float]) -> float:
     return total_score / (len(data))
 
 
+@remove_null
 def lower_quartile(data: list[float]) -> float:
     """Return the Q1 of data.
 
     lower_quartile(data: list[float]) -> float
     """
-    data = sorted(remove_null(data))
+    data = sorted(data)
     if len(data) == 0:
         raise ValueError("List empty")
     data_len = len(data)
@@ -109,12 +116,13 @@ def lower_quartile(data: list[float]) -> float:
     return first_term + 0.25 * (second_term - third_term)
 
 
+@remove_null
 def median_quartile(data: list[float]) -> float:
     """Return the Q2 of data.
 
     median_quartile(data: list[float]) -> float
     """
-    data = sorted(remove_null(data))
+    data = sorted(data)
     if len(data) == 0:
         raise ValueError("List empty")
     data_len = len(data)
@@ -125,12 +133,13 @@ def median_quartile(data: list[float]) -> float:
     return fourth_term + 0.50 * (fifth_term - fourth_term)
 
 
+@remove_null
 def upper_quartile(data: list[float]) -> float:
     """Return the Q3 of data.
 
     upper_quartile(data: list[float]) -> float
     """
-    data = sorted(remove_null(data))
+    data = sorted(data)
     if len(data) == 0:
         raise ValueError("List empty")
     data_len = len(data)
