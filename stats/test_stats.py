@@ -124,11 +124,11 @@ class TestStd(unittest.TestCase):
 
     def test_basic(self):
         """Test with basic list."""
-        self.assertEqual(std([75, 450, 18, 597, 27474, 48575]), 353648756.47222215)
+        self.assertEqual(std([75, 450, 18, 597, 27474, 48575]), 18805.551214261766)
 
     def test_none(self):
         """Test with float("nan") values in list."""
-        self.assertEqual(std([75, 450, 18, 597, float("nan"), 27474, 48575, float("nan")]), 353648756.47222215)
+        self.assertEqual(std([75, 450, 18, 597, float("nan"), 27474, 48575, float("nan")]), 18805.551214261766)
 
 
 class TestQuartile(unittest.TestCase):
