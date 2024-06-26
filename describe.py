@@ -30,10 +30,12 @@ class StatsContainer:
     q3: list[float64] = field(init=False, default_factory=init_list)
     max: list[float64] = field(init=False, default_factory=init_list)
     median: list[float64] = field(init=False, default_factory=init_list)
+    interquartile_range: list[float64] = field(init=False, default_factory=init_list)
+    d_range: list[float64] = field(init=False, default_factory=init_list)
 
     def __post_init__(self) -> None:
         """Post construction method."""
-        self.ROWS_NAME = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max", "Median"]
+        self.ROWS_NAME = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max", "Median", "IQR", "Range"]
         self.COLUMNS_NAME = [column_name for column_name in self.df][2::]
 
     def compute_stats(self) -> None:
@@ -52,6 +54,8 @@ class StatsContainer:
             self.q3.append(stats.upper_quartile(data))
             self.max.append(stats.max(data))
             self.median.append(stats.median(data))
+            self.interquartile_range.append(stats.iqr(data))
+            self.d_range.append(stats.d_range(data))
 
     def to_dataframe(self) -> pd.DataFrame:
         """Convert this class to a pandas DataFrame.
@@ -59,7 +63,19 @@ class StatsContainer:
         to_dataframe(self) -> pd.DataFrame
         """
         return pd.DataFrame(
-            [self.count, self.mean, self.std, self.min, self.q1, self.q2, self.q3, self.max, self.median],
+            [
+                self.count,
+                self.mean,
+                self.std,
+                self.min,
+                self.q1,
+                self.q2,
+                self.q3,
+                self.max,
+                self.median,
+                self.interquartile_range,
+                self.d_range,
+            ],
             columns=self.COLUMNS_NAME,
             index=self.ROWS_NAME,
             dtype="float64",

@@ -149,3 +149,26 @@ def upper_quartile(data: list[float]) -> float:
     sixth_term = data[(3 * data_len) // 4 - 1]
     seventh_term = data[(3 * data_len) // 4]
     return sixth_term + 0.75 * (seventh_term - sixth_term)
+
+
+@remove_nan
+def iqr(data: list[float]) -> float:
+    """Return the interquartile range of data.
+
+    iqr(data: list[float]) -> float
+    """
+    if len(data) == 0:
+        raise ValueError("List empty")
+    return upper_quartile(data) - lower_quartile(data)
+
+
+@remove_nan
+def d_range(data: list[float]) -> float:
+    """Return the range of data.
+
+    range(data: list[float]) -> float
+    """
+    if len(data) == 0:
+        raise ValueError("List empty")
+    data = sorted(data)
+    return data[-1] - data[0]

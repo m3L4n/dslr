@@ -3,7 +3,7 @@
 import unittest
 from random import shuffle
 
-from stats import count, lower_quartile, max, mean, median, median_quartile, min, std, upper_quartile
+from stats import count, lower_quartile, max, mean, median, median_quartile, min, std, upper_quartile, iqr, d_range
 
 
 class TestMean(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestMean(unittest.TestCase):
         """Test with basic list."""
         self.assertEqual(mean([1, 2, 3, 4, 5]), 3)
 
-    def test_none(self):
+    def test_nan(self):
         """Test with float("nan") values in list."""
         self.assertEqual(mean([1, 2, 3, float("nan"), 4, 5]), 3)
 
@@ -47,7 +47,7 @@ class TestMedian(unittest.TestCase):
         """Test with n is even."""
         self.assertEqual(median([1, 2, 3, 4]), 2.5)
 
-    def test_none(self):
+    def test_nan(self):
         """Test with float("nan") values in list."""
         self.assertEqual(mean([1, 2, 3, float("nan"), 4]), 2.5)
 
@@ -63,7 +63,7 @@ class TestCount(unittest.TestCase):
         """Test with basic list."""
         self.assertEqual(count([1, 2, 3, 4, 5]), 5)
 
-    def test_none(self):
+    def test_nan(self):
         """Test with float("nan") values in list."""
         self.assertEqual(count([1, 2, float("nan"), 3, 4, float("nan"), 5]), 5)
 
@@ -80,7 +80,7 @@ class TestMax(unittest.TestCase):
         """Test with sorted list."""
         self.assertEqual(max([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 10)
 
-    def test_none(self):
+    def test_nan(self):
         """Test with float("nan") values in list."""
         self.assertEqual(max([1, 2, 3, 4, float("nan"), 5, 6, 7, 8, float("nan"), 9, 10]), 10)
 
@@ -103,7 +103,7 @@ class TestMin(unittest.TestCase):
         """Test with sorted list."""
         self.assertEqual(min([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 1)
 
-    def test_none(self):
+    def test_nan(self):
         """Test with float("nan") values in list."""
         self.assertEqual(min([1, 2, 3, 4, float("nan"), 5, 6, 7, 8, float("nan"), 9, 10]), 1)
 
@@ -126,7 +126,7 @@ class TestStd(unittest.TestCase):
         """Test with basic list."""
         self.assertEqual(std([75, 450, 18, 597, 27474, 48575]), 18805.551214261766)
 
-    def test_none(self):
+    def test_nan(self):
         """Test with float("nan") values in list."""
         self.assertEqual(std([75, 450, 18, 597, float("nan"), 27474, 48575, float("nan")]), 18805.551214261766)
 
@@ -163,12 +163,60 @@ class TestQuartile(unittest.TestCase):
         self.assertEqual(median_quartile(data), 26)
         self.assertEqual(upper_quartile(data), 35)
 
-    def test_quartile_none(self):
+    def test_quartile_nan(self):
         """Test with float("nan") values in list."""
         data = [23, 13, 37, float("nan"), 16, 26, 35, float("nan"), 26, 35]
         self.assertEqual(lower_quartile(data), 15.25)
         self.assertEqual(median_quartile(data), 26)
         self.assertEqual(upper_quartile(data), 35)
+
+
+class TestIQR(unittest.TestCase):
+    """Test module for IQR function."""
+
+    def test_empty_iqr(self):
+        """Test with empty list."""
+        with self.assertRaises(ValueError):
+            iqr([])
+
+    def test_iqr_basic(self):
+        """Test with basic list."""
+        data = [4, 6, 7, 8, 10, 23, 34]
+        self.assertEqual(iqr(data), 17)
+
+    def test_iqr_hard(self):
+        """Test with float("nan") values in list."""
+        data = [23, 13, 37, 16, 26, 35, 26, 35]
+        self.assertEqual(iqr(data), 19.75)
+
+    def test_iqr_nan(self):
+        """Test with float("nan") values in list."""
+        data = [23, 13, 37, float("nan"), 16, 26, 35, float("nan"), 26, 35]
+        self.assertEqual(iqr(data), 19.75)
+
+
+class TestRange(unittest.TestCase):
+    """Test module for d_range function."""
+
+    def test_empty_d_range(self):
+        """Test with empty list."""
+        with self.assertRaises(ValueError):
+            d_range([])
+
+    def test_d_range_basic(self):
+        """Test with basic list."""
+        data = [4, 6, 7, 8, 10, 23, 34]
+        self.assertEqual(d_range(data), 30)
+
+    def test_d_range_hard(self):
+        """Test with float("nan") values in list."""
+        data = [23, 13, 37, 16, 26, 35, 26, 35]
+        self.assertEqual(d_range(data), 24)
+
+    def test_d_range_nan(self):
+        """Test with float("nan") values in list."""
+        data = [23, 13, 37, float("nan"), 16, 26, 35, float("nan"), 26, 35]
+        self.assertEqual(d_range(data), 24)
 
 
 if __name__ == "__main__":
