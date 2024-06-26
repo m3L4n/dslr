@@ -85,8 +85,6 @@ def describe():
 
     described = StatsContainer(data_frame)
     described.compute_stats()
-    print(data_frame.describe())
-    print("--------------------------")
     print(described.to_dataframe())
 
 
