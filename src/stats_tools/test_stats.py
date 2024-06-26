@@ -23,8 +23,8 @@ class TestMean(unittest.TestCase):
         self.assertEqual(mean([1, 2, 3, 4, 5]), 3)
 
     def test_none(self):
-        """Test with None values in list."""
-        self.assertEqual(mean([1, 2, 3, None, 4, 5]), 3)
+        """Test with float("nan") values in list."""
+        self.assertEqual(mean([1, 2, 3, float("nan"), 4, 5]), 3)
 
 
 class TestMedian(unittest.TestCase):
@@ -48,8 +48,8 @@ class TestMedian(unittest.TestCase):
         self.assertEqual(median([1, 2, 3, 4]), 2.5)
 
     def test_none(self):
-        """Test with None values in list."""
-        self.assertEqual(mean([1, 2, 3, None, 4]), 2.5)
+        """Test with float("nan") values in list."""
+        self.assertEqual(mean([1, 2, 3, float("nan"), 4]), 2.5)
 
 
 class TestCount(unittest.TestCase):
@@ -64,8 +64,8 @@ class TestCount(unittest.TestCase):
         self.assertEqual(count([1, 2, 3, 4, 5]), 5)
 
     def test_none(self):
-        """Test with None values in list."""
-        self.assertEqual(count([1, 2, None, 3, 4, None, 5]), 5)
+        """Test with float("nan") values in list."""
+        self.assertEqual(count([1, 2, float("nan"), 3, 4, float("nan"), 5]), 5)
 
 
 class TestMax(unittest.TestCase):
@@ -81,8 +81,8 @@ class TestMax(unittest.TestCase):
         self.assertEqual(max([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 10)
 
     def test_none(self):
-        """Test with None values in list."""
-        self.assertEqual(max([1, 2, 3, 4, None, 5, 6, 7, 8, None, 9, 10]), 10)
+        """Test with float("nan") values in list."""
+        self.assertEqual(max([1, 2, 3, 4, float("nan"), 5, 6, 7, 8, float("nan"), 9, 10]), 10)
 
     def test_shuffle(self):
         """Test with unsorted list."""
@@ -104,8 +104,8 @@ class TestMin(unittest.TestCase):
         self.assertEqual(min([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 1)
 
     def test_none(self):
-        """Test with None values in list."""
-        self.assertEqual(min([1, 2, 3, 4, None, 5, 6, 7, 8, None, 9, 10]), 1)
+        """Test with float("nan") values in list."""
+        self.assertEqual(min([1, 2, 3, 4, float("nan"), 5, 6, 7, 8, float("nan"), 9, 10]), 1)
 
     def test_shuffle(self):
         """Test with unsorted list."""
@@ -127,8 +127,8 @@ class TestStd(unittest.TestCase):
         self.assertEqual(std([75, 450, 18, 597, 27474, 48575]), 353648756.47222215)
 
     def test_none(self):
-        """Test with None values in list."""
-        self.assertEqual(std([75, 450, 18, 597, None, 27474, 48575, None]), 353648756.47222215)
+        """Test with float("nan") values in list."""
+        self.assertEqual(std([75, 450, 18, 597, float("nan"), 27474, 48575, float("nan")]), 353648756.47222215)
 
 
 class TestQuartile(unittest.TestCase):
@@ -164,8 +164,8 @@ class TestQuartile(unittest.TestCase):
         self.assertEqual(upper_quartile(data), 35)
 
     def test_quartile_none(self):
-        """Test with None values in list."""
-        data = [23, 13, 37, None, 16, 26, 35, None, 26, 35]
+        """Test with float("nan") values in list."""
+        data = [23, 13, 37, float("nan"), 16, 26, 35, float("nan"), 26, 35]
         self.assertEqual(lower_quartile(data), 15.25)
         self.assertEqual(median_quartile(data), 26)
         self.assertEqual(upper_quartile(data), 35)

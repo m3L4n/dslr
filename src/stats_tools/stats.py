@@ -1,22 +1,23 @@
 """Stats lib implemented for dslr."""
 
+import math
 from typing import Any, Callable, List
 
 
-def remove_null(func: Callable[[List[float]], float]) -> Callable[[List[float]], float]:
+def remove_nan(func: Callable[[List[float]], float]) -> Callable[[List[float]], float]:
     """Decorator who remove the None from the data list argument.
 
     remove_null_decorator(func: Callable[[List[float]], float]) -> Callable[[List[float]], float]
     """
 
     def wrapper(data: List[float]) -> float:
-        data = [x for x in data if x is not None]
+        data = [x for x in data if not math.isnan(x)]
         return func(data)
 
     return wrapper
 
 
-@remove_null
+@remove_nan
 def mean(data: List[float]) -> float:
     """Return the mean of data.
 
@@ -27,7 +28,7 @@ def mean(data: List[float]) -> float:
     return sum(data) / len(data)
 
 
-@remove_null
+@remove_nan
 def median(data: list[float]) -> float | int:
     """Return the median of data.
 
@@ -45,7 +46,7 @@ def median(data: list[float]) -> float | int:
     return (med1 + med2) / 2
 
 
-@remove_null
+@remove_nan
 def count(data: list[float]) -> float:
     """Return the number of non null element in list.
 
@@ -54,7 +55,7 @@ def count(data: list[float]) -> float:
     return len(data)
 
 
-@remove_null
+@remove_nan
 def max(data: list[Any]) -> Any:
     """Return the bigger value in the list.
 
@@ -69,7 +70,7 @@ def max(data: list[Any]) -> Any:
     return max
 
 
-@remove_null
+@remove_nan
 def min(data: list[Any]) -> Any:
     """Return the bigger value in the list.
 
@@ -84,7 +85,7 @@ def min(data: list[Any]) -> Any:
     return max
 
 
-@remove_null
+@remove_nan
 def std(data: list[float]) -> float:
     """Return the standard deviation of data.
 
@@ -98,7 +99,7 @@ def std(data: list[float]) -> float:
     return total_score / (len(data))
 
 
-@remove_null
+@remove_nan
 def lower_quartile(data: list[float]) -> float:
     """Return the Q1 of data.
 
@@ -116,7 +117,7 @@ def lower_quartile(data: list[float]) -> float:
     return first_term + 0.25 * (second_term - third_term)
 
 
-@remove_null
+@remove_nan
 def median_quartile(data: list[float]) -> float:
     """Return the Q2 of data.
 
@@ -133,7 +134,7 @@ def median_quartile(data: list[float]) -> float:
     return fourth_term + 0.50 * (fifth_term - fourth_term)
 
 
-@remove_null
+@remove_nan
 def upper_quartile(data: list[float]) -> float:
     """Return the Q3 of data.
 
