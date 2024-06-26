@@ -1,12 +1,19 @@
 """Percentile.py."""
 import math
+import numpy as np
+
+def sort_without_nan(X: list):
+   """Return a sorted list without nan."""
+   res = [ x for x in X if not np.isnan(x)]
+   return sorted(res)
+
 
 def percentile(X:list, percent, key= lambda x:x ):
     """Find the percentile of a list of values.
     
     take list  and percent between 0. and 1.
     """
-    list_sorted = sorted(X)
+    list_sorted = sort_without_nan(X)
     if not list_sorted:
         return None
     k = (len(list_sorted)-1) * percent

@@ -1,5 +1,6 @@
 """Std.py."""
 from utils.mean import mean
+from utils.sum import sum
 def std(X:list):
   """Return std of a list."""
   mean_lst = mean(X)

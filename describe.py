@@ -15,6 +15,7 @@ from utils.min import min
 
 # TO DO DELETE NULL SEGMENT
 
+
 def load(path: str) -> pd.DataFrame | None:
     """Take in parameter a csv and return its dataframe."""
     try:
@@ -68,16 +69,17 @@ def print_pandas_describe(numeric_features : dict):
     
     
     
-    
+def describe(path):
+    """Overload of the pandas method describe to show stat of each features."""
+    data_csv = load(path)
+    numeric_features = define_numbers_features(data_csv)
+    print_pandas_describe(numeric_features)
 
 def main(argv):
-    """Main function."""
+    """Main Function assert error and launch describe method."""
     try:
         assert len(argv) == 2, "Error\nUsage : python describe.py path_csv"
-        path = argv[1]
-        data_csv = load(path)
-        numeric_features = define_numbers_features(data_csv)
-        print_pandas_describe(numeric_features)
+        describe(argv[1])
     except Exception as e:
         print(type(e).__name__, ":", str(e))
 
