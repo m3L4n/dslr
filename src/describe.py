@@ -70,31 +70,9 @@ def main():
         exit(1)
     df = pd.read_csv(sys.argv[1])
     numerics = ["float16", "float32", "float64"]
-    df = df.select_dtypes(numerics).head(4)
-    ROWS_NAME = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max"]
-    COLUMNS_NAME = [column_name for column_name in df][2::]
+    df = df.select_dtypes(numerics)
     described = StatsContainer(df)
-    # count = []
-    # mean = []
-    # std = []
-    # min = []
-    # q1 = []
-    # q2 = []
-    # q3 = []
-    # max = []
-    # for name in COLUMNS_NAME:
-    #     data = df[name].tolist()
-    #     count.append(stats.count(data))
-    #     mean.append(stats.mean(data))
-    #     std.append(stats.std(data))
-    #     min.append(stats.min(data))
-    #     q1.append(stats.lower_quartile(data))
-    #     q2.append(stats.median_quartile(data))
-    #     q3.append(stats.upper_quartile(data))
-    #     max.append(stats.max(data))
-    # described = pd.DataFrame(
-    #     [count, mean, std, min, q1, q2, q3, max], columns=COLUMNS_NAME, index=ROWS_NAME, dtype="float64"
-    # )
+    described.compute_stats()
     print(described.to_dataframe())
 
 
