@@ -4,7 +4,7 @@ import sys
 from dataclasses import dataclass, field
 
 import pandas as pd
-from stats import count, lower_quartile, max, mean, median, median_quartile, min, std, upper_quartile
+import stats
 from utils import load
 from numpy import float64
 
@@ -43,15 +43,15 @@ class StatsContainer:
         """
         for name in self.COLUMNS_NAME:
             data = self.df[name].tolist()
-            self.count.append(count(data))
-            self.mean.append(mean(data))
-            self.std.append(std(data))
-            self.min.append(min(data))
-            self.q1.append(lower_quartile(data))
-            self.q2.append(median_quartile(data))
-            self.q3.append(upper_quartile(data))
-            self.max.append(max(data))
-            self.median.append(median(data))
+            self.count.append(stats.count(data))
+            self.mean.append(stats.mean(data))
+            self.std.append(stats.std(data))
+            self.min.append(stats.min(data))
+            self.q1.append(stats.lower_quartile(data))
+            self.q2.append(stats.median_quartile(data))
+            self.q3.append(stats.upper_quartile(data))
+            self.max.append(stats.max(data))
+            self.median.append(stats.median(data))
 
     def to_dataframe(self) -> pd.DataFrame:
         """Convert this class to a pandas DataFrame.
@@ -85,6 +85,8 @@ def describe():
 
     described = StatsContainer(data_frame)
     described.compute_stats()
+    print(data_frame.describe())
+    print("--------------------------")
     print(described.to_dataframe())
 
 

@@ -96,7 +96,7 @@ def std(data: list[float]) -> float:
     sample_mean = mean(data)
     score = [(x - sample_mean) ** 2 for x in data]
     total_score = sum(score)
-    return total_score / (len(data))
+    return math.sqrt(total_score / (len(data)))
 
 
 @remove_nan
