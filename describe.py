@@ -1,10 +1,10 @@
 """descripe.py."""
 
 import sys
-import pandas as pd
-from pandas.api.types import is_numeric_dtype
 
 from utils.count import count
+from utils.get_data_per_feature import define_numbers_features
+from utils.load_csv import load
 from utils.mean import mean
 from utils.percentiles import percentile
 from utils.quartile import f_quartile, s_quartile, t_quartile
@@ -13,28 +13,8 @@ from utils.sum import sum
 from utils.max import max
 from utils.min import min
 
-# TO DO DELETE NULL SEGMENT
 
 
-def load(path: str) -> pd.DataFrame | None:
-    """Take in parameter a csv and return its dataframe."""
-    try:
-        df = pd.read_csv(
-            path,
-        )
-        return pd.DataFrame(df, index=None)
-    except Exception as e:
-        raise e
-
-
-def define_numbers_features(data_csv):
-    """Define all the numeric column.
-    
-    return a dict for key name of column and value a list of the value of this column.
-    """
-    column = data_csv.columns[1:]  # delete "index because its not important"
-    row_numeric = dict([(x, list(data_csv[x])) for x in column if is_numeric_dtype(data_csv[x])])
-    return row_numeric
 
 def print_pandas_describe(numeric_features : dict):
     """Print like the method describe of Pandas."""
