@@ -2,25 +2,12 @@
 
 Which Hogwarts course has a homogeneous score distribution between all four houses?
 """
-from pandas.api.types import is_numeric_dtype
 import matplotlib.pyplot as plt
 
 from utils.load_csv import load
+from utils.separate_data_per_feature_per_house import separate_data_per_feature_per_house
 # TO DO SECURISE THE PATH
 
-def separate_data_per_feature_per_house(data_csv):
-    """Separate data csv in dict \
-    
-    for key the name of feature and value a dict  with key house name and value the result of the student.
-    """
-    dict_per_features = {}
-    houses = data_csv["Hogwarts House"].unique()
-    list_features = list([x for x in data_csv.columns[1:] if is_numeric_dtype(data_csv[x])])
-    for features in list_features:
-      dict_per_features[features] ={}
-      for house in houses:
-        dict_per_features[features][house] = list(data_csv[data_csv["Hogwarts House"] == house][features])
-    return dict_per_features    
 
 def plot_all_features(dict_csv_per_features):
     """Plot all the features histogram of all student per houses."""
@@ -43,7 +30,7 @@ def histogram():
   try:
     data_csv = load('datasets/dataset_train.csv')
     dict_csv_per_feature = separate_data_per_feature_per_house(data_csv)
-    # plot_all_features(dict_csv_per_feature)
+    plot_all_features(dict_csv_per_feature)
     plot_one_features(dict_csv_per_feature, 'Arithmancy')
         
     
