@@ -22,8 +22,11 @@ def pairplot():
 def main():
    """Main function."""
    data_csv = load('datasets/dataset_train.csv')
+   
+   X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand','Arithmancy', 'Care of Magical Creatures', 'Potions', 'Muggle Studies', "Transfiguration", "Flying"],)
+   # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand',],)
    colors = {"Ravenclaw": "#1b546c", "Slytherin": "#31AF56", "Gryffindor": "#B81F24", "Hufflepuff": "#DEB720"}
-   sns.pairplot(data_csv, hue="Hogwarts House", palette=colors, dropna=True)
+   sns.pairplot(X, hue="Hogwarts House", palette=colors, dropna=True)
    plt.show()
 
 if __name__ == "__main__":
