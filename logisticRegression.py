@@ -1,16 +1,16 @@
-"""Implementation of Logistic regressions
+"""Implementation of Logistic regressions.
 
-  We Have to implement a mutliclassifier (predict between A or B or C or D) with one vs rest algorithm
+We Have to implement a mutliclassifier (predict between A or B or C or D) with one vs rest algorithm
   -> To do this we have to implement a binary logistic regression( predict between a or B )
    ( we have to compare A vs BC , B vs AC , C vs AB) and take the maximum of probability of 
    the binary logistic regression.
 """
 import numpy as np
+import matplotlib.pyplot as plt
 
-from utils.load_csv import load
-from utils.mean import mean
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
+
+
+import os
 
 
 
@@ -22,19 +22,19 @@ class LogisticRegression:
   """
   
   
-  def __init__(self, lr=0.001, n_iters=1000):
+  def __init__(self, lr=0.001, n_iters=1000, weight=[], bias=[], class_=[]):
     """Constructor of the class.
     
     Define Learning Rate and the number of iteration for the gradient descent.
     """
     self.lrn = lr
     self.n_iters = n_iters
-    self.weights = None
-    self.bias = None
-    self._class = []
-    
-      
-    
+    self.weights = weight
+    self.bias = bias
+    self._class = class_
+  
+   
+  
   def sigmoid(self, x):
     """"Sigmoid function.
     
@@ -46,7 +46,12 @@ class LogisticRegression:
     sig = 1 / (1  + np.exp(-x)) 
     return sig
 
-    
+  def compute_loss(self, y_true, y_pred):
+        epsilon = 1e-9
+        y1 = y_true * np.log(y_pred + epsilon)
+        
+        y2 = (1-y_true) * np.log(1 - y_pred + epsilon)
+        return -np.mean(y1 + y2)
   def fit(self, X,y):
     """Fit method that permit to save weight matrix to predict after the class."""
     self._class = np.unique(y)
@@ -56,13 +61,15 @@ class LogisticRegression:
     self.bias = np.zeros(n_class)
     for idx, name_house in enumerate(self._class):
       self._fit_class(X, y, idx, name_house)
-  
+    self._save_weight_bias_class()
+
   def _fit_class(self, X, Y, idx_class, name_house):
         """Binary logistic regression.
         
         take name of class and pass all label( Y aka the truth) to 1  if y == class else 0
         """
-        y_transformed = [1 if label == name_house else 0  for label in Y ]
+        loss = []
+        y_transformed = np.array([1 if label == name_house else 0  for label in Y ])
         n_sample, _ = X.shape
         for _  in range(self.n_iters):
           
@@ -74,8 +81,22 @@ class LogisticRegression:
           db = (1/n_sample) * np.sum(pred - y_transformed)
           self.weights[idx_class] = self.weights[idx_class] - self.lrn * dw
           self.bias[idx_class] = self.bias[idx_class] -  self.lrn * db
+          loss.append(self.compute_loss(y_transformed, pred))
+        plt.plot(loss)
+        plt.ylabel('some numbers')
+        plt.show()
+        
           
-      
+  def _save_weight_bias_class(self,):
+    """Save weight and bias in model directory."""
+    curr_path = os.getcwd()
+    directory = "model"
+    path = os.path.join(curr_path, directory)  
+    os.makedirs(path, exist_ok = True) 
+    np.savetxt(f'{path}/weight_lr.csv', self.weights, delimiter=',')
+    np.savetxt(f'{path}/bias_lr.csv', self.bias, delimiter=',')
+    np.savetxt(f'{path}/class_lr.csv', np.array(self._class), delimiter=',',  fmt='%s')
+    
   def argmax(self, classPred):
     """Reproduction of np argmax.
     
@@ -110,68 +131,4 @@ class LogisticRegression:
       
       return np.array(res_arg_max)
     
-      
 
-# def accuracy(y_pred, y_test):
-#   for x, y in zip(y_pred,y_test):
-#     print("pred", x, 'truth', y)
-#     print("res",x == y )
-#   return np.sum(y_pred == y_test) / len(y_test)
-
-def ft_accuracy_score(y_pred, y_true):
-  return accuracy_score(y_true, y_pred)
-
-def transform_nan_to_mean(data_csv):
-  """Transform all NaN / NA / None in column to the mean of the column.
-  
-  That permit keep stability in our data
-  """
-  data_cpy = data_csv.copy()
-  column = data_cpy.columns
-  
-  for name in column:
-    mean_column = mean(list(data_cpy[name]))
-    data_cpy[name].fillna(mean_column, inplace=True)
-  return data_cpy
-   
-  
-    
-#  FEATURE THE MOST HETEROGEN
-# ASTRONOMY
-# Defense Against the Dark Arts
-# DIVINATION
-# Muggle Studies
-# Ancient Runes
-
-# Transfiguration
-# Charms
-# Flying
-
-def main():
-  data_csv = load('datasets/dataset_train.csv')
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Astronomy','Herbology','Defense Against the Dark Arts','Divination','Muggle Studies','Ancient Runes','History of Magic','Transfiguration','Potions','Care of Magical Creatures','Charms','Flying'],)
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures',],)  0.971875
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures','Potions'],)  #0.974375 
-  X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures'],)  #0.974375 
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures','Potions', 'Muggle Studies'],)  0.774375
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures','Potions'],)  
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures','Potions', 'Ancient Runes'],)  0.96625
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures','Potions', 'Transfiguration'],)  0.9575
-  # X = data_csv.drop(columns=['Hogwarts House', 'Index', 'First Name', 'Last Name', 'Birthday','Best Hand', 'Arithmancy','Care of Magical Creatures','Potions'],)  
-  X = transform_nan_to_mean(X)
-  X = X.values
-  house = "Hogwarts House"
-  y = list(data_csv[house])
-  X_train, X_test, y_train, y_test = train_test_split(
-
-    X, y, test_size=0.20, random_state=42)
-  
-  log_model = LogisticRegression(lr=0.01 , n_iters=10000)
-  log_model.fit(X_train, y_train)
-  y_pred = log_model.predict(X_test)
-  a = ft_accuracy_score(y_pred, y_test)
-  print(a)
-
-
-if __name__ == "__main__":
-    main()

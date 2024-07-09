@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 from utils.load_csv import load
 from utils.separate_data_per_feature_per_house import separate_data_per_feature_per_house
-# TO DO SECURISE THE PATH
 
 
 def plot_all_features(dict_csv_per_features):

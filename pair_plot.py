@@ -6,6 +6,7 @@ This visualization permit to respond at what features are you going to use for y
 import seaborn as sns
 from utils.load_csv import load
 import matplotlib.pyplot as plt
+
 def pairplot():
    """Function that print pair plot with seaborn.
    
@@ -23,8 +24,9 @@ def main():
    """Main function."""
    data_csv = load('datasets/dataset_train.csv')
    
-   X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand','Arithmancy', 'Care of Magical Creatures', 'Potions', 'Muggle Studies', "Transfiguration", "Flying"],)
    # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand',],)
+   # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand','Arithmancy','Care of Magical Creatures', 'Flying','Potions','Transfiguration','History of Magic', 'Muggle Studies', 'Divination','Defense Against the Dark Arts', ],)
+   X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand','Arithmancy','Care of Magical Creatures',  'Flying', 'Muggle Studies', 'Transfiguration', 'History of Magic', 'Defense Against the Dark Arts', 'Potions', 'Divination'],)
    colors = {"Ravenclaw": "#1b546c", "Slytherin": "#31AF56", "Gryffindor": "#B81F24", "Hufflepuff": "#DEB720"}
    sns.pairplot(X, hue="Hogwarts House", palette=colors, dropna=True)
    plt.show()
