@@ -1,16 +1,15 @@
 """Implementation of Logistic Regression model."""
 
+import math
+
 import numpy as np
 import pandas as pd
-
-# from sklearn import datasets
-# from sklearn.model_selection import train_test_split
 
 
 class LogisticRegression:
     """LogisticRegression class."""
 
-    def __init__(self, learning_rate: float = 0.01, n_iters: int = 1000) -> None:
+    def __init__(self, learning_rate: float = 0.01, n_iters: int = 1_000) -> None:
         """LogisticRegression constructor."""
         self.learning_rate = learning_rate
         self.n_iters = n_iters
@@ -29,7 +28,7 @@ class LogisticRegression:
         """
         self.classes = np.unique(y)
 
-        n_samples, n_features = X.shape
+        n_features = X.shape[1]
         n_classes = len(self.classes)
 
         self.weights = np.zeros((n_classes, n_features))
@@ -37,46 +36,49 @@ class LogisticRegression:
 
         for i in range(n_classes):
             class_name = self.classes[i]
-            y_norm = [1 if name == class_name else 0 for name in y]
+            y_one_vs_all = [1 if name == class_name else 0 for name in y]
+            self.gradient_descent(X, y, i, y_one_vs_all)
 
-            for _ in range(self.n_iters):
-                linear_pred = np.dot(X, self.weights[i]) + self.bias[i]
-                predictions = self._sigmoid(linear_pred)
+    def gradient_descent(self, X, y, i, y_one_vs_all):
+        """Perform a gradient_descent to find the optimal weights and bias.
 
-                dj_w = (1 / n_samples) * np.dot(X.T, (predictions - y_norm))
-                dj_b = (1 / n_samples) * np.sum(predictions - y_norm)
+        gradient_descent(self, X, y, i, y_one_vs_all)
+        """
+        n_samples = X.shape[0]
+        for _ in range(self.n_iters):
+            linear_pred = np.dot(X, self.weights[i]) + self.bias[i]
+            predictions = self._sigmoid(linear_pred)
 
-                self.weights[i] -= self.learning_rate * dj_w
-                self.bias[i] -= self.learning_rate * dj_b
+            dj_w = (1 / n_samples) * np.dot(X.T, (predictions - y_one_vs_all))
+            dj_b = (1 / n_samples) * np.sum(predictions - y_one_vs_all)
 
-        print(f"weights: {self.weights} | bias: {self.bias}")
-
-    def predict(self, X):
-        """Placeholder."""
-        linear_predictions = np.dot(X, self.weights) + self.bias
-        y_predictions = self._sigmoid(linear_predictions)
-        class_predictions = [0 if y <= 0.5 else 1 for y in y_predictions]
-        return class_predictions
+            self.weights[i] -= self.learning_rate * dj_w
+            self.bias[i] -= self.learning_rate * dj_b
 
 
-# def test_1():
-#     bc = datasets.load_breast_cancer()
-#     X, y = bc.data, bc.target
-#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
-#
-#     print(f"X_train {X_train}")
-#     print(f"y_train: {y_train}")
-#
-#     clf = LogisticRegression()
-#     clf.fit(X_train, y_train)
-#     y_pred = clf.predict(X_test)
-#
-#     def accuracy(y_pred, y_test):
-#         """Placeholder."""
-#         return np.sum(y_pred == y_test) / len(y_test)
-#
-#     acc = accuracy(y_pred, y_test)
-#     print(acc)
+def mean(data) -> float:
+    """Return the mean of data.
+
+    mean(data: list[float]) -> float
+    """
+    data = [x for x in data if not math.isnan(x)]
+
+    if len(data) == 0:
+        raise ValueError("List empty")
+    return sum(data) / len(data)
+
+
+def transform_nan_to_mean(data_csv):
+    """Transform all NaN / NA / None in column to the mean of the column.
+
+    That permit keep stability in our data
+    """
+    data_cpy = data_csv.copy()
+
+    for column_name in data_cpy.columns:
+        mean_column = mean(list(data_cpy[column_name]))
+        data_cpy.fillna({column_name: mean_column}, inplace=True)
+    return data_cpy
 
 
 if __name__ == "__main__":
@@ -94,7 +96,8 @@ if __name__ == "__main__":
             "Care of Magical Creatures",
         ],
         axis=1,
-    ).values
+    )
 
+    x_train = transform_nan_to_mean(x_train)
     logreg = LogisticRegression()
     logreg.fit(x_train, y_train)
