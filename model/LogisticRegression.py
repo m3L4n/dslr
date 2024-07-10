@@ -1,7 +1,5 @@
 """Implementation of Logistic Regression model."""
 
-import math
-
 import numpy as np
 import pandas as pd
 
@@ -55,49 +53,14 @@ class LogisticRegression:
             self.weights[i] -= self.learning_rate * dj_w
             self.bias[i] -= self.learning_rate * dj_b
 
+    def save(self, column_name):
+        """Save weights in csv files, one for each classes.
 
-def mean(data) -> float:
-    """Return the mean of data.
-
-    mean(data: list[float]) -> float
-    """
-    data = [x for x in data if not math.isnan(x)]
-
-    if len(data) == 0:
-        raise ValueError("List empty")
-    return sum(data) / len(data)
-
-
-def transform_nan_to_mean(data_csv):
-    """Transform all NaN / NA / None in column to the mean of the column.
-
-    That permit keep stability in our data
-    """
-    data_cpy = data_csv.copy()
-
-    for column_name in data_cpy.columns:
-        mean_column = mean(list(data_cpy[column_name]))
-        data_cpy.fillna({column_name: mean_column}, inplace=True)
-    return data_cpy
-
-
-if __name__ == "__main__":
-    df = pd.read_csv("datasets/dataset_train.csv")
-    y_train = df["Hogwarts House"].values
-    x_train = df.drop(
-        [
-            "Index",
-            "Hogwarts House",
-            "First Name",
-            "Last Name",
-            "Birthday",
-            "Best Hand",
-            "Arithmancy",
-            "Care of Magical Creatures",
-        ],
-        axis=1,
-    )
-
-    x_train = transform_nan_to_mean(x_train)
-    logreg = LogisticRegression()
-    logreg.fit(x_train, y_train)
+        save(self, column_name)
+        """
+        for c_i in range(len(self.classes)):
+            d = {}
+            for w_i in range(len(self.weights[c_i])):
+                d[column_name[w_i]] = self.weights[c_i]
+            df = pd.DataFrame(data=d)
+            df.to_csv(f"datasets/{self.classes[c_i]}_weights.csv")
