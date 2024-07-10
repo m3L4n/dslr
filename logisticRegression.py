@@ -32,6 +32,7 @@ class LogisticRegression:
     self.weights = weight
     self.bias = bias
     self._class = class_
+    self.loss_ = []
   
    
   
@@ -47,11 +48,13 @@ class LogisticRegression:
     return sig
 
   def compute_loss(self, y_true, y_pred):
-        epsilon = 1e-9
-        y1 = y_true * np.log(y_pred + epsilon)
+    """Compute loss of the function."""
+    epsilon = 1e-9
+    y1 = y_true * np.log(y_pred + epsilon)
         
-        y2 = (1-y_true) * np.log(1 - y_pred + epsilon)
-        return -np.mean(y1 + y2)
+    y2 = (1-y_true) * np.log(1 - y_pred + epsilon)
+    return -np.mean(y1 + y2)
+  
   def fit(self, X,y):
     """Fit method that permit to save weight matrix to predict after the class."""
     self._class = np.unique(y)
@@ -62,6 +65,14 @@ class LogisticRegression:
     for idx, name_house in enumerate(self._class):
       self._fit_class(X, y, idx, name_house)
     self._save_weight_bias_class()
+    
+  def plot_loss(self):
+    """Plot loss of the n class."""
+    if len(self.loss_) == 0:
+      print("You have to fit the class to plot the loss")
+    for x in self.loss_:
+      plt.plot(x)
+      plt.show()
 
   def _fit_class(self, X, Y, idx_class, name_house):
         """Binary logistic regression.
@@ -82,9 +93,7 @@ class LogisticRegression:
           self.weights[idx_class] = self.weights[idx_class] - self.lrn * dw
           self.bias[idx_class] = self.bias[idx_class] -  self.lrn * db
           loss.append(self.compute_loss(y_transformed, pred))
-        plt.plot(loss)
-        plt.ylabel('some numbers')
-        plt.show()
+        self.loss_.append(loss)
         
           
   def _save_weight_bias_class(self,):

@@ -15,6 +15,7 @@ def logreg_train(data_csv):
   X, y = preprocessing_data(data_csv)
   log_model = LogisticRegression(lr=0.0001 , n_iters=100000)
   log_model.fit(X, y)
+  log_model.plot_loss()
   y_pred = log_model.predict(X)
   a = ft_accuracy_score(y_pred, y)
   print(a)
