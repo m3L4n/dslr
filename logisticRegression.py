@@ -35,7 +35,7 @@ class LogisticRegression:
         """ "Sigmoid function.
 
         BE CAREFUL BECAUSE  the right forumla is sig = 1 / (1  + np.exp(-x))
-        but we have to put boundary to value's x at 500 and -500
+        but we have to put boundary to value x at 500 and -500
         because otherwise it will overflow ( because dtype of x is float64)
         """
         x = np.clip(x, -500, 500)
@@ -84,22 +84,20 @@ class LogisticRegression:
 
             # gradient descent
             dw = (1 / n_sample) * np.dot(X.T, (pred - y_transformed))
-            # db = (1/n_sample) * np.sum(pred - y_transformed)
+
             self.weights[idx_class] = self.weights[idx_class] - self.lrn * dw
-            # self.bias[idx_class] = self.bias[idx_class] -  self.lrn * db
             loss.append(self.compute_loss(y_transformed, pred))
         self.loss_.append(loss)
 
     def _save_weight_bias_class(
         self,
     ):
-        """Save weight and bias in model directory."""
+        """Save weight and name of class in model directory."""
         curr_path = os.getcwd()
         directory = "model"
         path = os.path.join(curr_path, directory)
         os.makedirs(path, exist_ok=True)
         np.savetxt(f"{path}/weight_lr.csv", self.weights, delimiter=",")
-        # np.savetxt(f'{path}/bias_lr.csv', self.bias, delimiter=',')
         np.savetxt(
             f"{path}/class_lr.csv", np.array(self._class), delimiter=",", fmt="%s"
         )
@@ -107,7 +105,8 @@ class LogisticRegression:
     def argmax(self, classPred):
         """Reproduction of np argmax.
 
-        Function Important for one vs rest because its help to choose which probability is the max
+        Function is important for one vs rest because its help to choose which
+        probability is the max and return an array of prediction ( with name of class)
         """
         n_class, n_epoch = classPred.shape
         best_pred = []
@@ -134,7 +133,6 @@ class LogisticRegression:
                 X,
                 self.weights[i].T,
             )
-            # linear_pred = np.dot(X, self.weights[i]) + self.bias[i]
             pred = self.sigmoid(linear_pred)
             res.append(pred)
         res = np.array(res)

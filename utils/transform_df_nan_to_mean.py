@@ -12,6 +12,6 @@ def transform_nan_to_mean(data_csv):
   
   for name in column:
     mean_column = mean(list(data_cpy[name]))
-    data_cpy[name].fillna(mean_column, inplace=True)
+    data_cpy.fillna({name: mean_column}, inplace=True)
   return data_cpy
    
