@@ -53,6 +53,17 @@ class LogisticRegression:
             self.weights[i] -= self.learning_rate * dj_w
             self.bias[i] -= self.learning_rate * dj_b
 
+    def predict(self, X):
+        """Predict classes of the given X datas.
+
+        predict(self, X)
+        """
+        y_predictions = []
+        for i in range(len(self.classes)):
+            y_predictions.append(self._sigmoid(np.dot(self.weights[i], X.T)))
+        y_best_prediction = np.argmax(y_predictions, axis=0)
+        return [self.classes[x] for x in y_best_prediction]
+
     def save(self, column_name):
         """Save weights in csv files, one for each classes.
 
@@ -62,5 +73,6 @@ class LogisticRegression:
             d = {}
             for w_i in range(len(self.weights[c_i])):
                 d[column_name[w_i]] = self.weights[c_i]
-            df = pd.DataFrame(data=d)
+            d["bias"] = self.bias[c_i]
+            df = pd.DataFrame(data=d, dtype=np.float64)
             df.to_csv(f"datasets/{self.classes[c_i]}_weights.csv")

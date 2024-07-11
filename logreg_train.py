@@ -49,6 +49,7 @@ def train() -> None:
             "Best Hand",
             "Arithmancy",
             "Care of Magical Creatures",
+            "Defense Against the Dark Arts",
         ],
         axis=1,
     )
@@ -57,4 +58,11 @@ def train() -> None:
     logreg = LogisticRegression()
 
     logreg.fit(x_train, y_train)
+
     logreg.save(x_train.columns.values)
+    print(logreg.predict(x_train))
+
+
+if __name__ == "__main__":
+    train()
+    griffyndor = pd.read_csv("datasets/Gryffindor_weights.csv")
