@@ -16,10 +16,9 @@ class LogisticRegression:
     """Logistic Regression class.
 
     Based on sklearn class OneVsRestClassifier.
-    There is a fit for train the data and a predict function
     """
 
-    def __init__(self, lr=0.001, n_iters=1000, weight=[], bias=[], class_=[]):
+    def __init__(self, lr=0.001, n_iters=1000, weight=[], class_=[]):
         """Constructor of the class.
 
         Define Learning Rate and the number of iteration for the gradient descent.
@@ -27,7 +26,6 @@ class LogisticRegression:
         self.lrn = lr
         self.n_iters = n_iters
         self.weights = weight
-        self.bias = bias
         self._class = class_
         self.loss_ = []
 
@@ -56,7 +54,6 @@ class LogisticRegression:
         n_class = len(self._class)
         _, n_features = X.shape
         self.weights = np.zeros((n_class, n_features))
-        self.bias = np.zeros(n_class)
         for idx, name_house in enumerate(self._class):
             self._fit_class(X, y, idx, name_house)
         self._save_weight_bias_class()
