@@ -8,11 +8,7 @@ We Have to implement a mutliclassifier (predict between A or B or C or D) with o
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 import os
-
-
 
 class LogisticRegression:
   """Logistic Regression class.
@@ -35,7 +31,7 @@ class LogisticRegression:
     self.loss_ = []
   
    
-  
+
   def sigmoid(self, x):
     """"Sigmoid function.
     
@@ -43,7 +39,7 @@ class LogisticRegression:
     but we have to put boundary to value's x at 500 and -500 
     because otherwise it will overflow ( because dtype of x is float64)
     """
-    x = np.clip(x, -500, 500)
+    # x = np.clip(x, -500, 500)
     sig = 1 / (1  + np.exp(-x)) 
     return sig
 
@@ -83,15 +79,15 @@ class LogisticRegression:
         y_transformed = np.array([1 if label == name_house else 0  for label in Y ])
         n_sample, _ = X.shape
         for _  in range(self.n_iters):
-          
-          linear_pred = np.dot(X, self.weights[idx_class]) + self.bias[idx_class]
+            
+          linear_pred = np.dot( X, self.weights[idx_class].T) 
           pred = self.sigmoid(linear_pred)
           
           # gradient descent
           dw = (1/n_sample) * np.dot(X.T, (pred - y_transformed))
-          db = (1/n_sample) * np.sum(pred - y_transformed)
+          # db = (1/n_sample) * np.sum(pred - y_transformed)
           self.weights[idx_class] = self.weights[idx_class] - self.lrn * dw
-          self.bias[idx_class] = self.bias[idx_class] -  self.lrn * db
+          # self.bias[idx_class] = self.bias[idx_class] -  self.lrn * db
           loss.append(self.compute_loss(y_transformed, pred))
         self.loss_.append(loss)
         
@@ -103,7 +99,7 @@ class LogisticRegression:
     path = os.path.join(curr_path, directory)  
     os.makedirs(path, exist_ok = True) 
     np.savetxt(f'{path}/weight_lr.csv', self.weights, delimiter=',')
-    np.savetxt(f'{path}/bias_lr.csv', self.bias, delimiter=',')
+    # np.savetxt(f'{path}/bias_lr.csv', self.bias, delimiter=',')
     np.savetxt(f'{path}/class_lr.csv', np.array(self._class), delimiter=',',  fmt='%s')
     
   def argmax(self, classPred):
@@ -132,7 +128,8 @@ class LogisticRegression:
       res = []
       res_arg_max = []
       for i in range(len(self._class)):
-        linear_pred = np.dot(X, self.weights[i]) + self.bias[i]
+        linear_pred = np.dot(X,  self.weights[i].T,) 
+        # linear_pred = np.dot(X, self.weights[i]) + self.bias[i]
         pred = self.sigmoid(linear_pred)
         res.append(pred)
       res = np.array(res)
