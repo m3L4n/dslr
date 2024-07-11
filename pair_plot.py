@@ -24,13 +24,6 @@ def main():
    """Main function."""
    data_csv = load('datasets/dataset_train.csv')
    X  = data_csv[['Hogwarts House','Astronomy','Herbology','Defense Against the Dark Arts','Divination','Muggle Studies','Ancient Runes','History of Magic','Transfiguration','Charms','Flying']]
-   # X = data_csv[['Hogwarts House','Arithmancy','Astronomy','Herbology','Defense Against the Dark Arts','Divination','Muggle Studies','Ancient Runes','History of Magic','Transfiguration','Potions','Charms','Flying']] 
-   # X = data_csv[['Hogwarts House','Astronomy','Herbology','Defense Against the Dark Arts','Ancient Runes','Charms','Flying']] 
-   # X = data_csv[['Hogwarts House','Astronomy','Herbology','Defense Against the Dark Arts','Divination','Muggle Studies','Ancient Runes','Transfiguration','Charms',]] 
-   # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand',],)
-   # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand',],)
-   # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand','Arithmancy','Care of Magical Creatures', 'Flying','Potions','Transfiguration','History of Magic', 'Muggle Studies', 'Divination','Defense Against the Dark Arts', ],)
-   # X = data_csv.drop(columns=['Index', 'First Name', 'Last Name', 'Birthday','Best Hand','Arithmancy','Care of Magical Creatures',  'Flying', 'Muggle Studies', 'Transfiguration', 'History of Magic', 'Defense Against the Dark Arts', 'Potions', 'Divination'],)
    colors = {"Ravenclaw": "#1b546c", "Slytherin": "#31AF56", "Gryffindor": "#B81F24", "Hufflepuff": "#DEB720"}
    sns.pairplot(X, hue="Hogwarts House", palette=colors, dropna=True)
    plt.show()
