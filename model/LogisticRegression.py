@@ -12,7 +12,6 @@ class LogisticRegression:
         self.learning_rate = learning_rate
         self.n_iters = n_iters
         self.weights = None
-        self.bias = None
         self.classes = None
 
     def _sigmoid(self, x):
@@ -30,7 +29,6 @@ class LogisticRegression:
         n_classes = len(self.classes)
 
         self.weights = np.zeros((n_classes, n_features))
-        self.bias = np.zeros(n_classes)
 
         for i in range(n_classes):
             class_name = self.classes[i]
@@ -44,14 +42,12 @@ class LogisticRegression:
         """
         n_samples = X.shape[0]
         for _ in range(self.n_iters):
-            linear_pred = np.dot(X, self.weights[i]) + self.bias[i]
+            linear_pred = np.dot(X, self.weights[i])
             predictions = self._sigmoid(linear_pred)
 
             dj_w = (1 / n_samples) * np.dot(X.T, (predictions - y_one_vs_all))
-            dj_b = (1 / n_samples) * np.sum(predictions - y_one_vs_all)
 
             self.weights[i] -= self.learning_rate * dj_w
-            self.bias[i] -= self.learning_rate * dj_b
 
     def predict(self, X):
         """Predict classes of the given X datas.
