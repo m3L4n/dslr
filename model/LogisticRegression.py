@@ -7,7 +7,7 @@ import pandas as pd
 class LogisticRegression:
     """LogisticRegression class."""
 
-    def __init__(self, learning_rate: float = 0.01, n_iters: int = 1_000) -> None:
+    def __init__(self, learning_rate: float = 1e-1, n_iters: int = 10_000) -> None:
         """LogisticRegression constructor."""
         self.learning_rate = learning_rate
         self.n_iters = n_iters
@@ -16,7 +16,7 @@ class LogisticRegression:
         self.classes = None
 
     def _sigmoid(self, x):
-        x = np.clip(x, -500, 500)
+        x = np.clip(x, -500, 500)  # TODO delete when normalization is performed
         return 1 / (1 + np.exp(-x))
 
     def fit(self, X, y):
@@ -35,9 +35,9 @@ class LogisticRegression:
         for i in range(n_classes):
             class_name = self.classes[i]
             y_one_vs_all = [1 if name == class_name else 0 for name in y]
-            self.gradient_descent(X, y, i, y_one_vs_all)
+            self._gradient_descent(X, y, i, y_one_vs_all)
 
-    def gradient_descent(self, X, y, i, y_one_vs_all):
+    def _gradient_descent(self, X, y, i, y_one_vs_all):
         """Perform a gradient_descent to find the optimal weights and bias.
 
         gradient_descent(self, X, y, i, y_one_vs_all)
@@ -61,18 +61,16 @@ class LogisticRegression:
         y_predictions = []
         for i in range(len(self.classes)):
             y_predictions.append(self._sigmoid(np.dot(self.weights[i], X.T)))
-        y_best_prediction = np.argmax(y_predictions, axis=0)
-        return [self.classes[x] for x in y_best_prediction]
+        y_best_scores = np.argmax(y_predictions, axis=0)
+        return [self.classes[x] for x in y_best_scores]
 
-    def save(self, column_name):
-        """Save weights in csv files, one for each classes.
+    def save(self, index_name=[]):
+        """Save weights as csv.
 
         save(self, column_name)
         """
-        for c_i in range(len(self.classes)):
-            d = {}
-            for w_i in range(len(self.weights[c_i])):
-                d[column_name[w_i]] = self.weights[c_i]
-            d["bias"] = self.bias[c_i]
-            df = pd.DataFrame(data=d, dtype=np.float64)
-            df.to_csv(f"datasets/{self.classes[c_i]}_weights.csv")
+        d = {}
+        for i in range(len(self.classes)):
+            d[self.classes[i]] = self.weights[i]
+        df = pd.DataFrame(data=d, index=index_name)
+        df.to_csv("datasets/weights.csv")

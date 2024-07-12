@@ -2,11 +2,11 @@
 
 import math
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+from sklearn.metrics import accuracy_score
 
 from model.LogisticRegression import LogisticRegression
-from sklearn.metrics import accuracy_score
 
 
 def mean(data) -> float:
@@ -69,19 +69,23 @@ def train() -> None:
         axis=1,
     )
 
+    # standardize data
+
     x_train = transform_nan_to_mean(x_train)
     x_norm = standardization(x_train)
+
     logreg = LogisticRegression()
 
     logreg.fit(x_norm, y_train)
 
     logreg.save(x_train.columns.values)
+
     pred_y = logreg.predict(x_train)
 
-    true_pred = np.count_nonzero(pred_y == y_train)
-    print((true_pred / 1600) * 100)
     print(accuracy_score(pred_y, y_train) * 100)
 
 
 if __name__ == "__main__":
     train()
+    df = pd.read_csv("datasets/weights.csv")
+    print(df)
