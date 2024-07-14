@@ -34,16 +34,17 @@ def transform_nan_to_mean(data_csv):
     return data_cpy
 
 
-def standardization(x):
-    """Standardize x based on z-score algorithm.
+def standardize(x):
+    """Standardize data using min-max algorithm.
 
-    standardization(x)
+    standardize(x)
     """
-    mean = np.mean(x, axis=0)
-    std = np.std(x, axis=0)
+    min = np.min(x, axis=0)
+    max = np.max(x, axis=0)
+
     x_norm = x.copy()
     for i in range(x.shape[1]):
-        x_norm.iloc[:i] = (x.iloc[:i] - mean.iloc[i]) / std.iloc[i]
+        x_norm.iloc[:, i] = (x_norm.iloc[:, i] - min.iloc[i]) / (max.iloc[i] - min.iloc[i])
     return x_norm
 
 
@@ -69,20 +70,16 @@ def train() -> None:
         axis=1,
     )
 
-    # standardize data
-
     x_train = transform_nan_to_mean(x_train)
-    x_norm = standardization(x_train)
+    x_norm = standardize(x_train)
 
     logreg = LogisticRegression()
-
     logreg.fit(x_norm, y_train)
-
     logreg.save(x_train.columns.values)
 
-    pred_y = logreg.predict(x_train)
+    pred_y = logreg.predict(x_norm)
 
-    print(accuracy_score(pred_y, y_train) * 100)
+    print(f"Model accuracy: {accuracy_score(pred_y, y_train) * 100}%")
 
 
 if __name__ == "__main__":

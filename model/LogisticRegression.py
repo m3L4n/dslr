@@ -7,7 +7,7 @@ import pandas as pd
 class LogisticRegression:
     """LogisticRegression class."""
 
-    def __init__(self, learning_rate: float = 1e-1, n_iters: int = 10_000) -> None:
+    def __init__(self, learning_rate: float = 0.01, n_iters: int = 10_000) -> None:
         """LogisticRegression constructor."""
         self.learning_rate = learning_rate
         self.n_iters = n_iters
@@ -15,7 +15,6 @@ class LogisticRegression:
         self.classes = None
 
     def _sigmoid(self, x):
-        x = np.clip(x, -500, 500)  # TODO delete when normalization is performed
         return 1 / (1 + np.exp(-x))
 
     def fit(self, X, y):
