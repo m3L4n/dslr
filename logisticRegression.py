@@ -48,12 +48,14 @@ class LogisticRegression:
         y2 = (1 - y_true) * np.log(1 - y_pred + epsilon)
         return -np.mean(y1 + y2)
 
+    def processing_fit(self, X, y):
+        self._class = np.unique(y)
+        _, n_features = X.shape
+        self.weights = np.zeros((len(self._class), n_features))
+
     def fit(self, X, y):
         """Fit method that permit to save weight matrix to predict after the class."""
-        self._class = np.unique(y)
-        n_class = len(self._class)
-        _, n_features = X.shape
-        self.weights = np.zeros((n_class, n_features))
+        self.processing_fit(X, y)
         for idx, name_house in enumerate(self._class):
             self._fit_class(X, y, idx, name_house)
         self._save_weight_bias_class()
@@ -66,37 +68,43 @@ class LogisticRegression:
             plt.plot(x)
             plt.show()
 
-    def _fit_class(self, X, Y, idx_class, name_house):
-        """Binary logistic regression.
-
-        take name of class and pass all label( Y aka the truth) to 1  if y == class else 0
-        """
+    def gradent_descent(self, X, y, weight):
         loss = []
-        y_transformed = np.array([1 if label == name_house else 0 for label in Y])
+        linear_pred = np.dot(X, weight.T)
+        pred = self.sigmoid(linear_pred)
         n_sample, _ = X.shape
+        dw = (1 / n_sample) * np.dot(X.T, (pred - y))
+        weight = weight - self.lrn * dw
+        loss.append(self.compute_loss(y, pred))
+        return weight, loss
+
+    def transform_y_binary(self, y, name_truth):
+        """Take name of class and pass all label( Y aka the truth) to 1  if y == class else 0."""
+        return np.array([1 if label == name_truth else 0 for label in y])
+
+    def _fit_class(self, X, Y, idx_class, name_house):
+        """Binary logistic regression."""
+        loss_ = []
+        y_transformed = self.transform_y_binary(Y, name_house)
         for _ in range(self.n_iters):
 
-            linear_pred = np.dot(X, self.weights[idx_class].T)
-            pred = self.sigmoid(linear_pred)
-
-            # gradient descent
-            dw = (1 / n_sample) * np.dot(X.T, (pred - y_transformed))
-
-            self.weights[idx_class] = self.weights[idx_class] - self.lrn * dw
-            loss.append(self.compute_loss(y_transformed, pred))
-        self.loss_.append(loss)
+            self.weights[idx_class], loss = self.gradent_descent(
+                X, y_transformed, self.weights[idx_class]
+            )
+            loss_.append(loss)
+        self.loss_.append(loss_)
 
     def _save_weight_bias_class(
-        self,
+        self, name_weight="weight_lr.csv", name_class="class_lr.csv"
     ):
         """Save weight and name of class in model directory."""
         curr_path = os.getcwd()
         directory = "model"
         path = os.path.join(curr_path, directory)
         os.makedirs(path, exist_ok=True)
-        np.savetxt(f"{path}/weight_lr.csv", self.weights, delimiter=",")
+        np.savetxt(f"{path}/{name_weight}", self.weights, delimiter=",")
         np.savetxt(
-            f"{path}/class_lr.csv", np.array(self._class), delimiter=",", fmt="%s"
+            f"{path}/{name_class}", np.array(self._class), delimiter=",", fmt="%s"
         )
 
     def argmax(self, classPred):
@@ -131,6 +139,7 @@ class LogisticRegression:
                 self.weights[i].T,
             )
             pred = self.sigmoid(linear_pred)
+
             res.append(pred)
         res = np.array(res)
         res_arg_max = self.argmax(res)

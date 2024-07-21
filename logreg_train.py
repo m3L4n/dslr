@@ -1,5 +1,6 @@
 """Script for training the logistic regression."""
 
+from gradient_descent.SGD import SGD
 from logisticRegression import LogisticRegression
 from utils.ft_accuracy_score import ft_accuracy_score
 from utils.load_csv import load
@@ -9,12 +10,14 @@ import sys
 
 
 def logreg_train(data_csv):
-    """ "Function that instanciate a LR object and train and save weight and bias."""
+    """ "Function that instanciate a LR object and train and save weight"""
     X, y, X_df = preprocessing_data(data_csv)
-    choose_features(data_csv)
-    log_model = LogisticRegression(lr=0.12, n_iters=2_500)
+    # choose_features(data_csv)
+    # log_model = LogisticRegression(lr=0.12, n_iters=2_000)
+    log_model = SGD(lr=0.01, n_iters=160)
     log_model.fit(X, y)
     y_pred = log_model.predict(X)
+
     a = ft_accuracy_score(y_pred, y)
     print(a)
     log_model.plot_loss()

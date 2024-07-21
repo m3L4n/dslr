@@ -13,6 +13,7 @@ def preprocessing_data(
     features_to_drop=[
         "Arithmancy",
         "Care of Magical Creatures",
+        "Defense Against the Dark Arts",
     ],
 ):
     """Preprocess the data before training or predicting.
@@ -23,7 +24,8 @@ def preprocessing_data(
     df = drop_all_none_required_feature(dataFrame, f_drop)
     X_df = transform_nan_to_mean(df)
     X = X_df.values
-    X = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+    X = (X - X.mean(axis=0)) / X.std(axis=0)
+    # X = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
     y = list(dataFrame["Hogwarts House"])
     return X, y, X_df
 
@@ -36,10 +38,6 @@ def drop_all_none_required_feature(data_csv, features_to_excludes=[]):
     )
     df = data_csv.drop(columns=none_num_column)
     return df
-
-
-def chi_square(X, y):
-    
 
 
 def choose_features(dataFrame):
