@@ -46,7 +46,6 @@ class LogisticRegression:
                 indices = list(range(len(X)))
 
                 random.shuffle(indices)
-
                 x_shuffled = [X[i] for i in indices]
                 y_shuffled = [y[i] for i in indices]
                 x_sliced = np.array(x_shuffled[: self.batch_size])

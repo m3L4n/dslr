@@ -1,7 +1,7 @@
 """Preprocessing of the data before send it to logstic regression."""
 
 from pandas.api.types import is_numeric_dtype
-from utils.transform_df_nan_to_mean import transform_nan_to_mean
+from utils.statistic import statistic
 
 
 def preprocessing_data(
@@ -34,3 +34,17 @@ def drop_all_none_required_feature(data_csv, features_to_excludes=[]):
     )
     df = data_csv.drop(columns=none_num_column)
     return df
+
+
+def transform_nan_to_mean(data_csv):
+    """Transform all NaN / NA / None in column to the mean of the column.
+
+    That permit keep stability in our data
+    """
+    data_cpy = data_csv.copy()
+    column = data_cpy.columns
+
+    for name in column:
+        mean_column = statistic.mean(list(data_cpy[name]))
+        data_cpy.fillna({name: mean_column}, inplace=True)
+    return data_cpy
