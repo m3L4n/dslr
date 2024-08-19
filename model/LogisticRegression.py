@@ -13,6 +13,7 @@ class LogisticRegression:
         self.n_iters = n_iters
         self.weights = None
         self.classes = None
+        self.batch_size = 32
 
     def _sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -47,6 +48,31 @@ class LogisticRegression:
             dj_w = (1 / n_samples) * np.dot(X.T, (predictions - y_one_vs_all))
 
             self.weights[i] -= self.learning_rate * dj_w
+
+    def _mini_batch(self, X, y, i, y_one_vs_all):
+        """Perform a mini_batch to find the optimal weights and bias.
+
+        _mini_batch(self, X, y, i, y_one_vs_all)
+        """
+        n_samples = X.shape[0]
+
+        for _ in range(self.n_iters):
+            # Shuffle the data at the beginning of each iteration
+            indices = np.random.permutation(n_samples)
+            X_shuffled = X[indices]
+            y_shuffled = np.array(y_one_vs_all)[indices]
+
+            for start_idx in range(0, n_samples, self.batch_size):
+                end_idx = start_idx + self.batch_size
+                X_batch = X_shuffled[start_idx:end_idx]
+                y_batch = y_shuffled[start_idx:end_idx]
+
+                linear_pred = np.dot(X_batch, self.weights[i])
+                predictions = self._sigmoid(linear_pred)
+
+                dj_w = (1 / len(X_batch)) * np.dot(X_batch.T, (predictions - y_batch))
+
+                self.weights[i] -= self.learning_rate * dj_w
 
     def predict(self, X):
         """Predict classes of the given X datas.
