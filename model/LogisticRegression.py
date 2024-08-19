@@ -7,13 +7,13 @@ import pandas as pd
 class LogisticRegression:
     """LogisticRegression class."""
 
-    def __init__(self, learning_rate: float = 0.01, n_iters: int = 10_000) -> None:
+    def __init__(self, learning_rate: float = 0.01, n_iters: int = 1000) -> None:
         """LogisticRegression constructor."""
         self.learning_rate = learning_rate
         self.n_iters = n_iters
         self.weights = None
         self.classes = None
-        self.batch_size = 32
+        self.batch_size = 64
 
     def _sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -33,7 +33,7 @@ class LogisticRegression:
         for i in range(n_classes):
             class_name = self.classes[i]
             y_one_vs_all = [1 if name == class_name else 0 for name in y]
-            self._gradient_descent(X, y, i, y_one_vs_all)
+            self._mini_batch(X, y, i, y_one_vs_all)
 
     def _gradient_descent(self, X, y, i, y_one_vs_all):
         """Perform a gradient_descent to find the optimal weights and bias.
@@ -57,9 +57,8 @@ class LogisticRegression:
         n_samples = X.shape[0]
 
         for _ in range(self.n_iters):
-            # Shuffle the data at the beginning of each iteration
             indices = np.random.permutation(n_samples)
-            X_shuffled = X[indices]
+            X_shuffled = X.iloc[indices]
             y_shuffled = np.array(y_one_vs_all)[indices]
 
             for start_idx in range(0, n_samples, self.batch_size):
