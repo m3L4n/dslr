@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import os
+import random
 
 
 class LogisticRegression:
@@ -18,7 +19,7 @@ class LogisticRegression:
     Based on sklearn class OneVsRestClassifier.
     """
 
-    def __init__(self, lr=0.001, n_iters=1000, weight=[], class_=[]):
+    def __init__(self, lr=0.001, n_iters=1000, weight=[], class_=[], batch_size=None):
         """Constructor of the class.
 
         Define Learning Rate and the number of iteration for the gradient descent.
@@ -28,9 +29,46 @@ class LogisticRegression:
         self.weights = weight
         self._class = class_
         self.loss_ = []
+        self.batch_size = batch_size
+
+    def fit(self, X, y):
+        """Fit method that permit to save weight matrix to predict after the class."""
+        self._class = np.unique(y)
+        _, n_features = X.shape
+
+        self.weights = np.zeros((len(self._class), n_features))
+
+        for idx, name_house in enumerate(self._class):
+            x_sliced = X
+            y_sliced = y
+
+            if self.batch_size is not None:
+                indices = list(range(len(X)))
+
+                random.shuffle(indices)
+
+                x_shuffled = [X[i] for i in indices]
+                y_shuffled = [y[i] for i in indices]
+                x_sliced = np.array(x_shuffled[: self.batch_size])
+                y_sliced = np.array(y_shuffled[: self.batch_size])
+
+            self._fit_class(x_sliced, y_sliced, idx, name_house)
+        self._save_weight_class()
+
+    def _fit_class(self, X, Y, idx_class, name_house):
+        """Binary logistic regression."""
+        loss_ = []
+        y_transformed = self.transform_y_binary(Y, name_house)
+        for _ in range(self.n_iters):
+
+            self.weights[idx_class], loss = self.gradient_descent(
+                X, y_transformed, self.weights[idx_class]
+            )
+            loss_.append(loss)
+        self.loss_.append(loss_)
 
     def sigmoid(self, x):
-        """ "Sigmoid function.
+        """Sigmoid function.
 
         BE CAREFUL BECAUSE  the right forumla is sig = 1 / (1  + np.exp(-x))
         but we have to put boundary to value x at 500 and -500
@@ -40,35 +78,8 @@ class LogisticRegression:
         sig = 1 / (1 + np.exp(-x))
         return sig
 
-    def compute_loss(self, y_true, y_pred):
-        """Compute loss of the function."""
-        epsilon = 1e-9
-        y1 = y_true * np.log(y_pred + epsilon)
-
-        y2 = (1 - y_true) * np.log(1 - y_pred + epsilon)
-        return -np.mean(y1 + y2)
-
-    def processing_fit(self, X, y):
-        self._class = np.unique(y)
-        _, n_features = X.shape
-        self.weights = np.zeros((len(self._class), n_features))
-
-    def fit(self, X, y):
-        """Fit method that permit to save weight matrix to predict after the class."""
-        self.processing_fit(X, y)
-        for idx, name_house in enumerate(self._class):
-            self._fit_class(X, y, idx, name_house)
-        self._save_weight_bias_class()
-
-    def plot_loss(self):
-        """Plot loss of the n class."""
-        if len(self.loss_) == 0:
-            print("You have to fit the class to plot the loss")
-        for x in self.loss_:
-            plt.plot(x)
-            plt.show()
-
-    def gradent_descent(self, X, y, weight):
+    def gradient_descent(self, X, y, weight):
+        """Compute gradient descent."""
         loss = []
         linear_pred = np.dot(X, weight.T)
         pred = self.sigmoid(linear_pred)
@@ -78,23 +89,25 @@ class LogisticRegression:
         loss.append(self.compute_loss(y, pred))
         return weight, loss
 
+    def compute_loss(self, y_true, y_pred):
+        """Compute loss of the function."""
+        return (-1 / (len(y_pred))) * np.sum(
+            y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred)
+        )
+
     def transform_y_binary(self, y, name_truth):
         """Take name of class and pass all label( Y aka the truth) to 1  if y == class else 0."""
         return np.array([1 if label == name_truth else 0 for label in y])
 
-    def _fit_class(self, X, Y, idx_class, name_house):
-        """Binary logistic regression."""
-        loss_ = []
-        y_transformed = self.transform_y_binary(Y, name_house)
-        for _ in range(self.n_iters):
+    def plot_loss(self):
+        """Plot loss of the n class."""
+        if len(self.loss_) == 0:
+            print("You have to fit the class to plot the loss")
+        for x in self.loss_:
+            plt.plot(x)
+            plt.show()
 
-            self.weights[idx_class], loss = self.gradent_descent(
-                X, y_transformed, self.weights[idx_class]
-            )
-            loss_.append(loss)
-        self.loss_.append(loss_)
-
-    def _save_weight_bias_class(
+    def _save_weight_class(
         self, name_weight="weight_lr.csv", name_class="class_lr.csv"
     ):
         """Save weight and name of class in model directory."""

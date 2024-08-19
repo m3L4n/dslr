@@ -2,10 +2,6 @@
 
 from pandas.api.types import is_numeric_dtype
 from utils.transform_df_nan_to_mean import transform_nan_to_mean
-from sklearn.feature_selection import chi2
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
 
 
 def preprocessing_data(
@@ -27,7 +23,7 @@ def preprocessing_data(
     X = (X - X.mean(axis=0)) / X.std(axis=0)
     # X = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
     y = list(dataFrame["Hogwarts House"])
-    return X, y, X_df
+    return X, y
 
 
 def drop_all_none_required_feature(data_csv, features_to_excludes=[]):
@@ -38,16 +34,3 @@ def drop_all_none_required_feature(data_csv, features_to_excludes=[]):
     )
     df = data_csv.drop(columns=none_num_column)
     return df
-
-
-def choose_features(dataFrame):
-    """Use of chi2 algorithm to define which features use."""
-    X, y, x_df = preprocessing_data(dataFrame, [])
-    unique_y = np.unique(y)
-
-    y = [np.where(unique_y == class_y)[0][0] for class_y in y]
-    chi_scores = chi2(X, y)
-    p_values = pd.Series(chi_scores[1], index=x_df.columns)
-    p_values.sort_values(ascending=False, inplace=True)
-    p_values.plot.bar()
-    plt.show()

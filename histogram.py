@@ -4,18 +4,23 @@ Which Hogwarts course has a homogeneous score distribution between all four hous
 """
 
 import matplotlib.pyplot as plt
-
+import sys
 from utils.load_csv import load
 from utils.separate_data_per_feature_per_house import (
     separate_data_per_feature_per_house,
 )
 
 
-def plot_all_features(dict_csv_per_features):
-    """Plot all the features histogram of all student per houses."""
-    dict_copy = dict_csv_per_features.copy()
-    for feature in dict_csv_per_features.keys():
-        plot_one_features(dict_copy, feature)
+def plot_all_features():
+    """Plot all the features histogram of all :tudent per houses."""
+    try:
+        data_csv = load("datasets/dataset_train.csv")
+        dict_csv_per_features = separate_data_per_feature_per_house(data_csv)
+        dict_copy = dict_csv_per_features.copy()
+        for feature in dict_csv_per_features.keys():
+            plot_one_features(dict_copy, feature)
+    except Exception as e:
+        print(type(e).__name__, ":", str(e))
 
 
 def plot_one_features(dict_csv_per_features, name):
@@ -34,17 +39,20 @@ def histogram():
     try:
         data_csv = load("datasets/dataset_train.csv")
         dict_csv_per_feature = separate_data_per_feature_per_house(data_csv)
-        plot_all_features(dict_csv_per_feature)
         plot_one_features(dict_csv_per_feature, "Arithmancy")
 
     except Exception as e:
         print(type(e).__name__, ":", str(e))
 
 
-def main():
+def main(argv):
     """Main functions."""
-    histogram()
+    if len(argv) == 1:
+        histogram()
+    elif len(argv) == 2:
+        if argv[1] == "all":
+            plot_all_features()
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
