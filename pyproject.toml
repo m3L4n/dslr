@@ -33,4 +33,3 @@ extend-select = ["E501", "UP", "D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-

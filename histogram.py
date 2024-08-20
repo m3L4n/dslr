@@ -1,58 +1,50 @@
-"""Plot the result of this questions ?
+"""Display an histogram of the most homogeneous class."""
 
-Which Hogwarts course has a homogeneous score distribution between all four houses?
-"""
+import sys
 
 import matplotlib.pyplot as plt
-import sys
-from utils.load_csv import load
-from utils.separate_data_per_feature_per_house import (
-    separate_data_per_feature_per_house,
-)
+
+from utils import load
 
 
-def plot_all_features():
-    """Plot all the features histogram of all :tudent per houses."""
+def histogram(subject: str = "Arithmancy") -> None:
+    """Make an histogram of Hogwarts students by grade in classes.
+
+    histogram(subject: str = "Arithmancy") -> None
+    """
+    df = load("datasets/dataset_train.csv")
+    ravenclaw = df.loc[df["Hogwarts House"] == "Ravenclaw"]
+    slytherin = df.loc[df["Hogwarts House"] == "Slytherin"]
+    gryffindor = df.loc[df["Hogwarts House"] == "Gryffindor"]
+    hufflepuff = df.loc[df["Hogwarts House"] == "Hufflepuff"]
+
+    columns_name = [x for x in df.columns][6::]
+
+    class_index = 0
     try:
-        data_csv = load("datasets/dataset_train.csv")
-        dict_csv_per_features = separate_data_per_feature_per_house(data_csv)
-        dict_copy = dict_csv_per_features.copy()
-        for feature in dict_csv_per_features.keys():
-            plot_one_features(dict_copy, feature)
-    except Exception as e:
-        print(type(e).__name__, ":", str(e))
+        class_index = columns_name.index(subject)
+    except ValueError:
+        print("Error: incorrect class name, the availables class names are:")
+        for x in columns_name:
+            print(f"- {x}")
+        exit(1)
 
+    plt.title(f"Histogram of Hogwarts students in {columns_name[class_index]} class")
 
-def plot_one_features(dict_csv_per_features, name):
-    """Plot one feature histogram of all student per houses."""
-    feature_dict = dict_csv_per_features[name]
-    color = ["green", "red", "blue", "yellow"]
-    plt.title(name)
-    for index_house, (name_f, value_f) in enumerate(feature_dict.items()):
-        plt.hist(value_f, color=color[index_house], alpha=0.5, label=name_f)
-        plt.legend()
+    plt.hist(ravenclaw[columns_name[class_index]], label="Ravenclaw", color="#1B546C", alpha=0.75)
+    plt.hist(slytherin[columns_name[class_index]], label="Slytherin", color="#31AF56", alpha=0.75)
+    plt.hist(gryffindor[columns_name[class_index]], label="Gryffindor", color="#B81F24", alpha=0.75)
+    plt.hist(hufflepuff[columns_name[class_index]], label="Hufflepuff", color="#DEB720", alpha=0.75)
+
+    plt.xlabel("Grades")
+    plt.ylabel("Students")
+
+    plt.legend()
     plt.show()
 
 
-def histogram():
-    """Histogram function that calculate and plot the result of the questions."""
-    try:
-        data_csv = load("datasets/dataset_train.csv")
-        dict_csv_per_feature = separate_data_per_feature_per_house(data_csv)
-        plot_one_features(dict_csv_per_feature, "Arithmancy")
-
-    except Exception as e:
-        print(type(e).__name__, ":", str(e))
-
-
-def main(argv):
-    """Main functions."""
-    if len(argv) == 1:
-        histogram()
-    elif len(argv) == 2:
-        if argv[1] == "all":
-            plot_all_features()
-
-
 if __name__ == "__main__":
-    main(sys.argv)
+    if len(sys.argv) == 2:
+        histogram(sys.argv[1])
+    else:
+        histogram()
