@@ -10,6 +10,7 @@ def preprocessing_data(
         "Arithmancy",
         "Care of Magical Creatures",
         "Defense Against the Dark Arts",
+        "Hogwarts House"
     ],
 ):
     """Preprocess the data before training or predicting.
@@ -43,7 +44,6 @@ def transform_nan_to_mean(data_csv):
     """
     data_cpy = data_csv.copy()
     column = data_cpy.columns
-
     for name in column:
         mean_column = statistic.mean(list(data_cpy[name]))
         data_cpy.fillna({name: mean_column}, inplace=True)
