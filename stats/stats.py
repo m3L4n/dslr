@@ -100,6 +100,20 @@ def std(data: list[float]) -> float:
 
 
 @remove_nan
+def var(data: list[float]) -> float:
+    """Return the deviation of data.
+
+    var(data: list[float]) -> float
+    """
+    if len(data) == 0:
+        raise ValueError("List empty")
+    sample_mean = mean(data)
+    score = [(x - sample_mean) ** 2 for x in data]
+    total_score = sum(score)
+    return total_score / (len(data))
+
+
+@remove_nan
 def lower_quartile(data: list[float]) -> float:
     """Return the Q1 of data.
 

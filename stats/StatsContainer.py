@@ -3,8 +3,9 @@
 from dataclasses import dataclass, field
 
 import pandas as pd
-import stats
 from numpy import float64
+
+import stats
 
 
 def init_list() -> list:
@@ -30,10 +31,11 @@ class StatsContainer:
     median: list[float64] = field(init=False, default_factory=init_list)
     interquartile_range: list[float64] = field(init=False, default_factory=init_list)
     d_range: list[float64] = field(init=False, default_factory=init_list)
+    var: list[float64] = field(init=False, default_factory=init_list)
 
     def __post_init__(self) -> None:
         """Post construction method."""
-        self.ROWS_NAME = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max", "Median", "IQR", "Range"]
+        self.ROWS_NAME = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max", "Median", "IQR", "Range", "Var"]
         self.COLUMNS_NAME = [column_name for column_name in self.df][2::]
 
     def compute_stats(self) -> None:
@@ -54,6 +56,7 @@ class StatsContainer:
             self.median.append(stats.median(data))
             self.interquartile_range.append(stats.iqr(data))
             self.d_range.append(stats.d_range(data))
+            self.var.append(stats.var(data))
 
     def to_dataframe(self) -> pd.DataFrame:
         """Convert this class to a pandas DataFrame.
@@ -73,6 +76,7 @@ class StatsContainer:
                 self.median,
                 self.interquartile_range,
                 self.d_range,
+                self.var,
             ],
             columns=self.COLUMNS_NAME,
             index=self.ROWS_NAME,
