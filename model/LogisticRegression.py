@@ -7,13 +7,16 @@ import pandas as pd
 class LogisticRegression:
     """LogisticRegression class."""
 
-    def __init__(self, learning_rate: float = 0.01, n_iters: int = 1000) -> None:
+    def __init__(
+        self, learning_rate: float = 0.01, n_iters: int = 10_000, batch_size: int = 64, optimizer: str = "gd"
+    ) -> None:
         """LogisticRegression constructor."""
         self.learning_rate = learning_rate
         self.n_iters = n_iters
         self.weights = None
         self.classes = None
-        self.batch_size = 64
+        self.batch_size = batch_size
+        self.optimizer = optimizer
 
     def _sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -33,7 +36,12 @@ class LogisticRegression:
         for i in range(n_classes):
             class_name = self.classes[i]
             y_one_vs_all = [1 if name == class_name else 0 for name in y]
-            self._mini_batch(X, y, i, y_one_vs_all)
+            if self.optimizer == "gd":
+                self._gradient_descent(X, y, i, y_one_vs_all)
+            elif self.optimizer == "mini_batch":
+                self._mini_batch(X, i, y_one_vs_all)
+            else:
+                raise NotImplementedError(f"{self.optimizer} functions is not implemented yet.")
 
     def _gradient_descent(self, X, y, i, y_one_vs_all):
         """Perform a gradient_descent to find the optimal weights and bias.
@@ -49,7 +57,7 @@ class LogisticRegression:
 
             self.weights[i] -= self.learning_rate * dj_w
 
-    def _mini_batch(self, X, y, i, y_one_vs_all):
+    def _mini_batch(self, X, i, y_one_vs_all):
         """Perform a mini_batch to find the optimal weights and bias.
 
         _mini_batch(self, X, y, i, y_one_vs_all)

@@ -1,6 +1,7 @@
 """Train module of the LogisticRegression program."""
 
 import math
+import sys
 
 import numpy as np
 import pandas as pd
@@ -73,13 +74,22 @@ def train() -> None:
     x_train = transform_nan_to_mean(x_train)
     x_norm = standardize(x_train)
 
-    logreg = LogisticRegression()
-    logreg.fit(x_norm, y_train)
-    logreg.save(x_train.columns.values)
+    logreg = None
+    if len(sys.argv) > 1:
+        if "--mini_batch" in sys.argv[1::]:
+            logreg = LogisticRegression(optimizer="mini_batch")
+        elif "--gd" in sys.argv[1::]:
+            logreg = LogisticRegression(optimizer="gd")
+    else:
+        logreg = LogisticRegression()
 
-    pred_y = logreg.predict(x_norm)
+    if logreg:
+        logreg.fit(x_norm, y_train)
+        logreg.save(x_train.columns.values)
 
-    print(f"Model accuracy: {accuracy_score(pred_y, y_train) * 100}%")
+        pred_y = logreg.predict(x_norm)
+
+        print(f"Model accuracy: {accuracy_score(pred_y, y_train) * 100}%")
 
 
 if __name__ == "__main__":
