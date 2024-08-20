@@ -19,4 +19,10 @@ def load(path: str) -> pd.DataFrame:
     except FileNotFoundError:
         print("Error: file not found")
         exit(1)
+    except PermissionError:
+        print("Error: you don't have permission to open this file")
+        exit(1)
+    except Exception:
+        print("An error occured...")
+        exit(1)
     return dataframe

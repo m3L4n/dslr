@@ -1,7 +1,5 @@
 """Describe module read a csv file and display some stats on it numeric columns."""
 
-"""descripe.py."""
-
 import sys
 
 import pandas as pd
