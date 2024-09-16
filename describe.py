@@ -16,6 +16,7 @@ def get_df_numerics_columns() -> pd.DataFrame:
         print("Please provide the csv file you want to desribe")
         exit(1)
     df = load(sys.argv[1])
+    df = df.drop(columns=["Hogwarts House"])
     numerics = ["float16", "float32", "float64"]
     return df.select_dtypes(numerics)
 
@@ -23,7 +24,6 @@ def get_df_numerics_columns() -> pd.DataFrame:
 def describe():
     """Reimplementation of pandas describe method."""
     data_frame = get_df_numerics_columns()
-
     described = StatsContainer(data_frame)
     described.compute_stats()
     print(described.to_dataframe())

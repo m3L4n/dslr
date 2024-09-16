@@ -36,7 +36,7 @@ class StatsContainer:
     def __post_init__(self) -> None:
         """Post construction method."""
         self.ROWS_NAME = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max", "Median", "IQR", "Range", "Var"]
-        self.COLUMNS_NAME = [column_name for column_name in self.df][2::]
+        self.COLUMNS_NAME = [column_name for column_name in self.df]
 
     def compute_stats(self) -> None:
         """Fill all stats attributes with data from DataFrame.
